@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:campus_connect/screens/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -16,40 +15,14 @@ class DisplayMap extends StatefulWidget {
 class DisplayMapState extends State<DisplayMap> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static const LatLng sourceLocation = LatLng(10.18377, 76.43058);
-  static const LatLng destination = LatLng(10.02331, 76.30217);
+  static const LatLng sourceLocation = LatLng(10.024038, 76.2880784);
+  static const LatLng destination = LatLng(10.01977, 76.29127);
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
   BitmapDescriptor sourceIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
-
-  // void getCurrentLocation() async {
-  //   print("Hello");
-  //   Location location = Location();
-
-  //   location.getLocation().then(
-  //     (location) {
-  //       currentLocation = location;
-  //       print("Current Location: ${currentLocation}");
-  //     },
-  //   );
-
-  //   GoogleMapController googleMapController = await _controller.future;
-
-  //   location.onLocationChanged.listen((newLoc) {
-  //     currentLocation = newLoc;
-
-  //     googleMapController.animateCamera(
-  //       CameraUpdate.newCameraPosition(
-  //         CameraPosition(
-  //             zoom: 13.5, target: LatLng(newLoc.latitude!, newLoc.longitude!)),
-  //       ),
-  //     );
-  //   });
-  //   setState(() {});
-  // }
 
   Future<void> _getCurrentLocation() async {
     Location location = new Location();
@@ -82,13 +55,17 @@ class DisplayMapState extends State<DisplayMap> {
     GoogleMapController googleMapController = await _controller.future;
 
     location.onLocationChanged.listen((newLoc) {
-      currentLocation = newLoc;
-      print("000000000000000000000000 ${currentLocation}");
+      setState(() {
+        currentLocation = newLoc;
+      });
+      print("New Location: ${currentLocation}");
 
       googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-              zoom: 13.5, target: LatLng(newLoc.latitude!, newLoc.longitude!)),
+            zoom: 14.5,
+            target: LatLng(newLoc.latitude!, newLoc.longitude!),
+          ),
         ),
       );
     });
@@ -101,7 +78,7 @@ class DisplayMapState extends State<DisplayMap> {
       PointLatLng(sourceLocation.latitude, sourceLocation.longitude),
       PointLatLng(destination.latitude, destination.longitude),
     );
-    print("99999999999999999999999999999999999999 ${result.points}");
+    print(result.points);
     if (result.points.isNotEmpty) {
       result.points.forEach(
         (PointLatLng point) => polylineCoordinates.add(
@@ -112,7 +89,7 @@ class DisplayMapState extends State<DisplayMap> {
       setState(() {});
     } else {
       print(
-          "11111111111111111111111111111111111111111111111 ${result.errorMessage}");
+          "11111111111111111111111111111111111111111111111111 ${result.errorMessage}");
     }
   }
 
@@ -143,7 +120,6 @@ class DisplayMapState extends State<DisplayMap> {
   @override
   void initState() {
     _getCurrentLocation();
-    _getCurrentLocation();
     setCustomMarkerIcon();
     getPolyPoints();
     super.initState();
@@ -151,8 +127,7 @@ class DisplayMapState extends State<DisplayMap> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "---------------------------------------------------------------------------- ${currentLocation}");
+    print(currentLocation);
     return Scaffold(
       appBar: AppBar(
         title: const Text(

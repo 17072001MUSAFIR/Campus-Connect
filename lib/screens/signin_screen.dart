@@ -16,6 +16,10 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   TextEditingController passwordTextController = TextEditingController();
   TextEditingController emailTextController = TextEditingController();
+
+  String? selectedRole;
+  List<String> role = ["User", "Driver"];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +50,34 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 textField("Enter Password", Icons.lock_outline, true,
                     passwordTextController),
+                const SizedBox(height: 20),
+                // textField1("Enter Bus ID", Icons.stop, TextInputType.number,
+                //     busIdController),
+                DropdownButtonFormField(
+                  items: role.map((s) {
+                    return DropdownMenuItem(
+                      value: s,
+                      child: Text(s.toString()),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedRole = value.toString();
+                    });
+                  },
+                  style: TextStyle(color: Colors.black.withOpacity(0.9)),
+                  decoration: InputDecoration(
+                    labelText: "Select Role",
+                    labelStyle: TextStyle(color: Colors.black.withOpacity(0.9)),
+                    filled: true,
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    fillColor: Colors.black.withOpacity(0.3),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                        borderSide: const BorderSide(
+                            width: 0, style: BorderStyle.none)),
+                  ),
+                ),
                 const SizedBox(
                   height: 20,
                 ),
@@ -65,7 +97,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const UserHome()));
+                              builder: (context) => UserHome(
+                                  userName: emailTextController.text)));
                     }
                   }).onError((error, stackTrace) {
                     print("Error ${error.toString()}");

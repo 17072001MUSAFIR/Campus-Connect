@@ -1,7 +1,6 @@
 import 'package:campus_connect/firebase_options.dart';
-import 'package:campus_connect/screens/bus_details.dart';
-import 'package:campus_connect/screens/display_map.dart';
-import 'package:campus_connect/screens/home_screen.dart';
+//import 'package:campus_connect/screens/driver_screen.dart';
+//import 'package:campus_connect/screens/display_map.dart';
 import 'package:campus_connect/screens/signin_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +25,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const SignInScreen(),
-      home: const DisplayMap(),
+      home: const SignInScreen(),
+      //home:  DriverPage(),
     );
   }
 }

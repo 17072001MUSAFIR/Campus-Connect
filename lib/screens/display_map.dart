@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'package:campus_connect/screens/constants.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 
 class DisplayMap extends StatefulWidget {
-  const DisplayMap({Key? key}) : super(key: key);
+  const DisplayMap({Key? key, required this.driverID, required this.source})
+      : super(key: key);
+
+  final int driverID;
+  final LatLng source;
 
   @override
   State<DisplayMap> createState() => DisplayMapState();
@@ -15,8 +20,12 @@ class DisplayMap extends StatefulWidget {
 class DisplayMapState extends State<DisplayMap> {
   final Completer<GoogleMapController> _controller = Completer();
 
-  static const LatLng sourceLocation = LatLng(10.024038, 76.2880784);
-  static const LatLng destination = LatLng(10.01977, 76.29127);
+  final databaseReference = FirebaseDatabase.instance.ref();
+
+  static LatLng destination = const LatLng(0, 0);
+  static const LatLng sourceLocation = LatLng(10.18325, 76.42885);
+  static LatLng driverLoc = const LatLng(0, 0);
+  // static const LatLng destination = LatLng(10.02221, 76.30113);
 
   List<LatLng> polylineCoordinates = [];
   LocationData? currentLocation;
@@ -24,32 +33,73 @@ class DisplayMapState extends State<DisplayMap> {
   BitmapDescriptor destinationIcon = BitmapDescriptor.defaultMarker;
   BitmapDescriptor currentLocationIcon = BitmapDescriptor.defaultMarker;
 
+  Future<void> _getDriverLocation() async {
+    // int driverid1 = int.parse(widget.driverID);
+    print(
+        "10920809338478622222222255444444444444444444444444444444444444444444444${widget.driverID.runtimeType}");
+    final query = databaseReference.child('locations');
+    // .orderByChild('driverId').equalTo(1);
+
+    GoogleMapController googleMapController = await _controller.future;
+
+    // setState(() {
+    query.once().then((event) {
+      DataSnapshot snapshot = event.snapshot;
+      Map<dynamic, dynamic> driverData =
+          snapshot.value as Map<dynamic, dynamic>;
+      driverData.forEach((driverId, driverInfo) {
+        print(
+            "11111111111111111111111111111122222222222222222222222222222222222 $driverId");
+        print(
+            "11111111111111111111111111111122222222222222222222222222222222222 $driverInfo");
+        // if (driverId == driverIdToFind) { 
+        //   // do something with driverInfo
+        //   print(driverInfo["latitude"]);
+        //   print(driverInfo["longitude"]);
+        // }
+      });
+      print('1234576793798436038462Data : ${driverData["driver1"]}');
+      driverLoc = LatLng(driverData["driver1"]["latitude"],
+          driverData["driver1"]["longitude"]);
+    });
+    // });
+
+    googleMapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          zoom: 14.5,
+          target: driverLoc,
+        ),
+      ),
+    );
+  }
+
   Future<void> _getCurrentLocation() async {
-    Location location = new Location();
-    bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
-    LocationData _locationData;
+    Location location = Location();
+    bool serviceEnabled;
+    PermissionStatus permissionGranted;
+    LocationData locationData;
 
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) {
+    serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
         return;
       }
     }
 
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+    permissionGranted = await location.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await location.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
         return;
       }
     }
 
-    _locationData = await location.getLocation();
+    locationData = await location.getLocation();
 
     setState(() {
-      currentLocation = _locationData;
+      currentLocation = locationData;
     });
 
     GoogleMapController googleMapController = await _controller.future;
@@ -58,7 +108,7 @@ class DisplayMapState extends State<DisplayMap> {
       setState(() {
         currentLocation = newLoc;
       });
-      print("New Location: ${currentLocation}");
+      print("New Location: $currentLocation");
 
       googleMapController.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -71,6 +121,10 @@ class DisplayMapState extends State<DisplayMap> {
     });
   }
 
+  /*initializeGeoFireListener() {
+    Geofire.initialize("activeDrivers");
+  } */
+
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
@@ -80,11 +134,11 @@ class DisplayMapState extends State<DisplayMap> {
     );
     print(result.points);
     if (result.points.isNotEmpty) {
-      result.points.forEach(
-        (PointLatLng point) => polylineCoordinates.add(
+      for (var point in result.points) {
+        polylineCoordinates.add(
           LatLng(point.latitude, point.longitude),
-        ),
-      );
+        );
+      }
 
       setState(() {});
     } else {
@@ -119,7 +173,9 @@ class DisplayMapState extends State<DisplayMap> {
 
   @override
   void initState() {
+    destination = widget.source;
     _getCurrentLocation();
+    _getDriverLocation();
     setCustomMarkerIcon();
     getPolyPoints();
     super.initState();
@@ -128,6 +184,9 @@ class DisplayMapState extends State<DisplayMap> {
   @override
   Widget build(BuildContext context) {
     print(currentLocation);
+    print(widget.source);
+    _getDriverLocation();
+    print(widget.driverID);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -139,8 +198,7 @@ class DisplayMapState extends State<DisplayMap> {
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
               initialCameraPosition: CameraPosition(
-                target: LatLng(
-                    currentLocation!.latitude!, currentLocation!.longitude!),
+                target: driverLoc,
                 zoom: 14.5,
               ),
               polylines: {

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "446839569052",
+    "firebase_url": "https://campus-connect-c7a4c-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "campus-connect-c7a4c",
     "storage_bucket": "campus-connect-c7a4c.appspot.com"
   },
@@ -29,6 +30,13 @@
             {
               "client_id": "446839569052-ebt4ff4q4klmj7sa1dqansnp6dmimau3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "446839569052-gd8fa5n4ha44sjtov8pbu3km5rhpd6tq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.campusConnect"
+              }
             }
           ]
         }

@@ -1,7 +1,7 @@
 import 'package:campus_connect/reusable_widgets/reusable_widget.dart';
 import 'package:campus_connect/screens/bus_details.dart';
-import 'package:campus_connect/screens/display_map.dart';
 import 'package:campus_connect/screens/driver_details.dart';
+import 'package:campus_connect/screens/driver_screen.dart';
 import 'package:campus_connect/screens/user_details.dart';
 import 'package:campus_connect/utils/color_utils.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const UserDetails()));
+                }),
+                const SizedBox(
+                  height: 10,
+                ),
+                button(context, "Driver", () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DriverPage()));
                 }),
               ],
             ),

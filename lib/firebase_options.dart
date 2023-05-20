@@ -58,6 +58,9 @@ class DefaultFirebaseOptions {
     messagingSenderId: '446839569052',
     projectId: 'campus-connect-c7a4c',
     storageBucket: 'campus-connect-c7a4c.appspot.com',
+
+    /*databaseURL:
+        'https://campus-connect-c7a4c-default-rtdb.asia-southeast1.firebasedatabase.app',*/
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -66,7 +69,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '446839569052',
     projectId: 'campus-connect-c7a4c',
     storageBucket: 'campus-connect-c7a4c.appspot.com',
-    iosClientId: '446839569052-gd8fa5n4ha44sjtov8pbu3km5rhpd6tq.apps.googleusercontent.com',
+    iosClientId:
+        '446839569052-gd8fa5n4ha44sjtov8pbu3km5rhpd6tq.apps.googleusercontent.com',
     iosBundleId: 'com.example.campusConnect',
   );
 
@@ -76,7 +80,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '446839569052',
     projectId: 'campus-connect-c7a4c',
     storageBucket: 'campus-connect-c7a4c.appspot.com',
-    iosClientId: '446839569052-gd8fa5n4ha44sjtov8pbu3km5rhpd6tq.apps.googleusercontent.com',
+    iosClientId:
+        '446839569052-gd8fa5n4ha44sjtov8pbu3km5rhpd6tq.apps.googleusercontent.com',
     iosBundleId: 'com.example.campusConnect',
   );
 }
